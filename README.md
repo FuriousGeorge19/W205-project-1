@@ -125,7 +125,7 @@ Public Datasets: Bring up your Google BigQuery console, open the menu for the pu
 Paste your SQL query and answer the question in a sentence.  Be sure you properly format your queries and results using markdown. 
 
 
-**<span style="color:blue">- What's the size of this dataset? (i.e., how many trips)</span>**  
+**- What's the size of this dataset? (i.e., how many trips)**  
 
   - bikeshare_trips has 983,648 rows and 11 columns  
   
@@ -155,7 +155,7 @@ Paste your SQL query and answer the question in a sentence.  Be sure you properl
     ```WHERE table_name = "bikeshare_stations";```
 
 
-**<span style="color:blue">- What is the earliest start date and time and latest end date and time for a trip?</span>**  
+**- What is the earliest start date and time and latest end date and time for a trip?**  
 
   - The earliest start date and time was: 2013-08-29 09:08:00 UTC 
   - The latest end date and time was: 2016-08-31 23:48:00 UTC
@@ -163,7 +163,7 @@ Paste your SQL query and answer the question in a sentence.  Be sure you properl
 	```SELECT MIN(start_date), MAX(end_date)```  
 	```FROM``` ``` `bigquery-public-data.san_francisco.bikeshare_trips`;```
   
-**<span style="color:blue">- How many bikes are there?**
+**- How many bikes are there?**
 
   - There are 700 bikes as measured by unique bike IDs in the bikeshare_trips table
   
@@ -174,6 +174,74 @@ Paste your SQL query and answer the question in a sentence.  Be sure you properl
 
 ### Questions of your own
 - Make up 3 questions and answer them using the Bay Area Bike Share Trips Data.  These questions MUST be different than any of the questions and queries you ran above.
+
+
+- **Question 1: What were the total number of trips per month over the span of the dataset?</span>**  
+
+  * Answer: The answer is returned in the SQL query and the sum matches the total number of rows in the table.
+  
+  * SQL query:
+  
+    `SELECT`     
+    `COUNT(DISTINCT trip_id) AS trips,`   
+    `DATE_TRUNC(DATE(START_DATE, 'America/Los_Angeles'), MONTH) as month`  
+    ```FROM``` ``` `bigquery-public-data.san_francisco.bikeshare_trips` ```   
+    `GROUP BY 2`  
+    `ORDER BY 2;`  
+  
+
+- **Question 2: What percentage of trips, by month, did subscribers's account for?**
+  * Answer: Subscriber trips represented 44%-79% from Aug-2013-Oct_10. 
+    After that point, subscribers trips were between 81% and 93% of total trips
+  * SQL query: 
+  
+    `SELECT`  
+    `DATE_SUB(DATE_ADD(DATE_TRUNC(DATE(start_date, 'America/Los_Angeles'), MONTH), INTERVAL 1 MONTH), INTERVAL 1 DAY) AS Month,`  
+    `FORMAT("%2.0f%%", (COUNT (DISTINCT`  
+      `IF`  
+        `(subscriber_type = 'Subscriber',`  
+          `trip_id,`  
+          `NULL))/COUNT(trip_id)*100)) AS trips`  
+    `FROM`  
+    ``` `bigquery-public-data.san_francisco.bikeshare_trips` ```  
+    `GROUP BY 1`  
+    `ORDER BY 1;`  
+  
+
+- **Question 3: How has the number of stations changed over time??**
+  * Answer: There were between 64 & 71 stations over the ~3 year time frame of the dataset
+  * SQL query:
+  
+  	`WITH unique_stations AS (`  
+  	  `SELECT`   
+  	    `DISTINCT`  
+        `DATE_SUB(DATE_ADD(DATE_TRUNC(DATE(start_date, 'America/Los_Angeles'), MONTH),`   
+         `INTERVAL 1 MONTH), INTERVAL 1 DAY) AS Month,`  
+  	      `start_station_name`
+  	    `FROM`
+  	      ``` `bigquery-public-data.san_francisco.bikeshare_trips` ``` 
+  
+  	  `UNION DISTINCT`
+  
+  	  `SELECT` 
+  	    `DISTINCT`
+  	      `DATE_SUB(DATE_ADD(DATE_TRUNC(DATE(start_date, 'America/Los_Angeles'), MONTH), INTERVAL 1` `MONTH), INTERVAL 1 DAY) AS Month,`  
+  	      `end_station_name`
+  	    `FROM`
+  	     ``` `bigquery-public-data.san_francisco.bikeshare_trips` ```
+  	`)`
+  	  
+  	`SELECT`  
+  	  `unique_stations.Month,`  
+  	  `COUNT(unique_stations.start_station_name)`  
+  	`FROM unique_stations`  
+  	  `GROUP BY 1`  
+  	  `ORDER BY 1;`  
+
+
+
+
+
 
 - Question 1:
   * Answer:  
