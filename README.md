@@ -124,7 +124,8 @@ Public Datasets: Bring up your Google BigQuery console, open the menu for the pu
 
 Paste your SQL query and answer the question in a sentence.  Be sure you properly format your queries and results using markdown. 
 
-- What's the size of this dataset? (i.e., how many trips)
+
+**<span style="color:blue">- What's the size of this dataset? (i.e., how many trips)</span>**  
 
   - bikeshare_trips has 983,648 rows and 11 columns  
   
@@ -135,21 +136,39 @@ Paste your SQL query and answer the question in a sentence.  Be sure you properl
      ```FROM``` ``` `bigquery-public-data`.san_francisco.INFORMATION_SCHEMA.COLUMNS```  
     ```WHERE table_name = "bikeshare_trips";```
 
-- What is the earliest start date and time and latest end date and time for a trip?
+  - bikeshare_status has 107,501,619 rows and 4 columns  
+  
+     ```SELECT COUNT (*)```  
+     ```FROM``` ``` `bigquery-public-data.san_francisco.bikeshare_status`;```
+     
+     ```SELECT COUNT(distinct column_name) ```  
+     ```FROM``` ``` `bigquery-public-data`.san_francisco.INFORMATION_SCHEMA.COLUMNS```  
+    ```WHERE table_name = "bikeshare_status";```
+
+  - bikeshare_stations has 74 rows and 7 columns  
+  
+     ```SELECT COUNT (*)```  
+     ```FROM``` ``` `bigquery-public-data.san_francisco.bikeshare_stations`;```
+     
+     ```SELECT COUNT(distinct column_name) ```  
+     ```FROM``` ``` `bigquery-public-data`.san_francisco.INFORMATION_SCHEMA.COLUMNS```  
+    ```WHERE table_name = "bikeshare_stations";```
+
+
+**<span style="color:blue">- What is the earliest start date and time and latest end date and time for a trip?</span>**  
 
   - The earliest start date and time was: 2013-08-29 09:08:00 UTC 
   - The latest end date and time was: 2016-08-31 23:48:00 UTC
   
-  ```SELECT MIN(start_date), MAX(end_date)```  
-  ```FROM``` ``` `bigquery-public-data.san_francisco.bikeshare_trips`;```
-
-- How many bikes are there?
+	```SELECT MIN(start_date), MAX(end_date)```  
+	```FROM``` ``` `bigquery-public-data.san_francisco.bikeshare_trips`;```
+  
+**<span style="color:blue">- How many bikes are there?**
 
   - There are 700 bikes as measured by unique bike IDs in the bikeshare_trips table
   
     ```SELECT COUNT (DISTINCT bike_number) AS  Unique_Bike_IDs```  
     ```FROM``` ``` `bigquery-public-data.san_francisco.bikeshare_trips`;```
-
 
 
 
