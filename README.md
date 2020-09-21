@@ -126,16 +126,38 @@ Paste your SQL query and answer the question in a sentence.  Be sure you properl
 
 - What's the size of this dataset? (i.e., how many trips)
 
+  - bikeshare_trips has 983,648 rows and 11 columns  
+  
+     ```SELECT COUNT (*)```  
+     ```FROM``` ``` `bigquery-public-data.san_francisco.bikeshare_trips`;```
+     
+     ```SELECT COUNT(distinct column_name) ```  
+     ```FROM``` ``` `bigquery-public-data`.san_francisco.INFORMATION_SCHEMA.COLUMNS```  
+    ```WHERE table_name = "bikeshare_trips";```
+
 - What is the earliest start date and time and latest end date and time for a trip?
 
+  - The earliest start date and time was: 2013-08-29 09:08:00 UTC 
+  - The latest end date and time was: 2016-08-31 23:48:00 UTC
+  
+  ```SELECT MIN(start_date), MAX(end_date)```  
+  ```FROM``` ``` `bigquery-public-data.san_francisco.bikeshare_trips`;```
+
 - How many bikes are there?
+
+  - There are 700 bikes as measured by unique bike IDs in the bikeshare_trips table
+  
+    ```SELECT COUNT (DISTINCT bike_number) AS  Unique_Bike_IDs```  
+    ```FROM``` ``` `bigquery-public-data.san_francisco.bikeshare_trips`;```
+
+
 
 
 ### Questions of your own
 - Make up 3 questions and answer them using the Bay Area Bike Share Trips Data.  These questions MUST be different than any of the questions and queries you ran above.
 
-- Question 1: 
-  * Answer:
+- Question 1:
+  * Answer:  
   * SQL query:
 
 - Question 2:
@@ -145,6 +167,7 @@ Paste your SQL query and answer the question in a sentence.  Be sure you properl
 - Question 3:
   * Answer:
   * SQL query:
+
 
 ### Bonus activity queries (optional - not graded - just this section is optional, all other sections are required)
 
