@@ -240,23 +240,6 @@ Paste your SQL query and answer the question in a sentence.  Be sure you properl
   	  `ORDER BY 1;`  
 
 
-
-
-
-
-- Question 1:
-  * Answer:  
-  * SQL query:
-
-- Question 2:
-  * Answer:
-  * SQL query:
-
-- Question 3:
-  * Answer:
-  * SQL query:
-
-
 ### Bonus activity queries (optional - not graded - just this section is optional, all other sections are required)
 
 The bike share dynamic dataset offers multiple tables that can be joined to learn more interesting facts about the bike share business across all regions. These advanced queries are designed to challenge you to explore the other tables, using only the available metadata to create views that give you a broader understanding of the overall volumes across the regions(each region has multiple stations)
