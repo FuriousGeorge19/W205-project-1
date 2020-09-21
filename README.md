@@ -281,15 +281,78 @@ from `bigquery-public-data.san_francisco_bikeshare.bikeshare_station_info`
 1. Rerun the first 3 queries from Part 1 using bq command line tool (Paste your bq
    queries and results here, using properly formatted markdown):
 
+
+
   * What's the size of this dataset? (i.e., how many trips)
+
+    ```
+    bq query --use_legacy_sql=false '
+      SELECT COUNT (*) as Trips
+      FROM
+        `bigquery-public-data.san_francisco.bikeshare_trips`'
+    ```
+    
+   | Trips  |
+   |--------|
+   | 936648 |
+  
 
   * What is the earliest start time and latest end time for a trip?
 
+      ```
+      bq query --use_legacy_sql=false '
+        SELECT MIN(start_date) AS First, MAX(end_date) AS Last  
+          FROM
+          `bigquery-public-data.san_francisco.bikeshare_trips`'  
+      ```  
+
+  |        First        |         Last        |
+  |:-------------------:|:-------------------:|
+  | 2013-08-29 09:08:00 | 2016-08-31 23:48:00 |
+
+
+
   * How many bikes are there?
+
+      ```
+      bq query --use_legacy_sql=false '
+        SELECT MIN(start_date), MAX(end_date) 
+          FROM
+          `bigquery-public-data.san_francisco.bikeshare_trips`'  
+      ```
+      
+  | Unique_Bike_IDs |
+  |:---------------:|
+  |       700       |
+
 
 2. New Query (Run using bq and paste your SQL query and answer the question in a sentence, using properly formatted markdown):
 
   * How many trips are in the morning vs in the afternoon?
+  
+      ```
+      bq query --use_legacy_sql=false '
+        SELECT
+          Morning,
+          Afternoon,
+          Total - Morning - Afternoon AS Other,
+          Total
+            FROM
+            (
+              SELECT
+                COUNT(trip_id) as Total,
+                COUNT(IF( EXTRACT(HOUR FROM DATETIME_TRUNC(DATETIME(start_date), HOUR)) BETWEEN 5 AND 11, trip_id, NULL)) AS Morning,
+                COUNT(IF( EXTRACT(HOUR FROM DATETIME_TRUNC(DATETIME(start_date), HOUR)) BETWEEN 12 AND 15, trip_id, NULL)) AS Afternoon
+              FROM
+                `bigquery-public-data.san_francisco.bikeshare_trips`
+            ) AS x;
+      ``` 
+  
+  | Morning | Afternoon | Other  | Total  |
+  |:-------:|-----------|--------|--------|
+  |  404919 | 176142    | 402587 | 983648 |
+  
+  
 
 
 ### Project Questions
