@@ -330,9 +330,9 @@ from `bigquery-public-data.san_francisco_bikeshare.bikeshare_station_info`
 
   * How many trips are in the morning vs in the afternoon?
   
-    There were 404,919 trips in the morning vs 176,142 in the afternoon
-    I defined 'Morning' as between 5AM and Noon
-    I defined 'Afternoon' as between Noon and 4PM
+    There were 404,919 trips in the morning vs 176,142 in the afternoon  
+    I defined 'Morning' as between 5AM and Noon  
+    I defined 'Afternoon' as between Noon and 4PM  
   
       ```
       bq query --use_legacy_sql=false '
