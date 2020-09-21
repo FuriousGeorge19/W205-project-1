@@ -156,6 +156,7 @@ Paste your SQL query and answer the question in a sentence.  Be sure you properl
 
 
 **- What is the earliest start date and time and latest end date and time for a trip?**  
+    (The UTC timestamps are incorrect, it appears. It seems like these are almost certainly PST times.)
 
   - The earliest start date and time was: 2013-08-29 09:08:00 UTC 
   - The latest end date and time was: 2016-08-31 23:48:00 UTC
@@ -184,7 +185,7 @@ Paste your SQL query and answer the question in a sentence.  Be sure you properl
   
     `SELECT`     
     `COUNT(DISTINCT trip_id) AS trips,`   
-    `DATE_TRUNC(DATE(START_DATE, 'America/Los_Angeles'), MONTH) as month`  
+    `DATE_TRUNC(DATE(START_DATE), MONTH) as month`  
     ```FROM``` ``` `bigquery-public-data.san_francisco.bikeshare_trips` ```   
     `GROUP BY 2`  
     `ORDER BY 2;`  
@@ -196,12 +197,12 @@ Paste your SQL query and answer the question in a sentence.  Be sure you properl
   * SQL query: 
   
     `SELECT`  
-    `DATE_SUB(DATE_ADD(DATE_TRUNC(DATE(start_date, 'America/Los_Angeles'), MONTH), INTERVAL 1 MONTH), INTERVAL 1 DAY) AS Month,`  
+    `DATE_SUB(DATE_ADD(DATE_TRUNC(DATE(start_date), MONTH), INTERVAL 1 MONTH), INTERVAL 1 DAY) AS Month,`  
     `FORMAT("%2.0f%%", (COUNT (DISTINCT`  
       `IF`  
         `(subscriber_type = 'Subscriber',`  
           `trip_id,`  
-          `NULL))/COUNT(trip_id)*100)) AS trips`  
+          `NULL))/COUNT(trip_id)*100)) AS trips`
     `FROM`  
     ``` `bigquery-public-data.san_francisco.bikeshare_trips` ```  
     `GROUP BY 1`  
@@ -215,7 +216,7 @@ Paste your SQL query and answer the question in a sentence.  Be sure you properl
   	`WITH unique_stations AS (`  
   	  `SELECT`   
   	    `DISTINCT`  
-        `DATE_SUB(DATE_ADD(DATE_TRUNC(DATE(start_date, 'America/Los_Angeles'), MONTH),`   
+        `DATE_SUB(DATE_ADD(DATE_TRUNC(DATE(start_date), MONTH),`   
          `INTERVAL 1 MONTH), INTERVAL 1 DAY) AS Month,`  
   	      `start_station_name`
   	    `FROM`
@@ -225,7 +226,7 @@ Paste your SQL query and answer the question in a sentence.  Be sure you properl
   
   	  `SELECT` 
   	    `DISTINCT`
-  	      `DATE_SUB(DATE_ADD(DATE_TRUNC(DATE(start_date, 'America/Los_Angeles'), MONTH), INTERVAL 1` `MONTH), INTERVAL 1 DAY) AS Month,`  
+  	      `DATE_SUB(DATE_ADD(DATE_TRUNC(DATE(start_date), MONTH), INTERVAL 1` `MONTH), INTERVAL 1 DAY) AS Month,`  
   	      `end_station_name`
   	    `FROM`
   	     ``` `bigquery-public-data.san_francisco.bikeshare_trips` ```
