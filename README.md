@@ -129,31 +129,38 @@ Paste your SQL query and answer the question in a sentence.  Be sure you properl
 
   - bikeshare_trips has 983,648 rows and 11 columns  
   
-     ```SELECT COUNT (*)```  
-     ```FROM``` ``` `bigquery-public-data.san_francisco.bikeshare_trips`;```
+    ```
+    SELECT COUNT (*)
+    FROM `bigquery-public-data.san_francisco.bikeshare_trips`;
      
-     ```SELECT COUNT(distinct column_name) ```  
-     ```FROM``` ``` `bigquery-public-data`.san_francisco.INFORMATION_SCHEMA.COLUMNS```  
-    ```WHERE table_name = "bikeshare_trips";```
-
+    SELECT COUNT(distinct column_name)
+    FROM  `bigquery-public-data`.san_francisco.INFORMATION_SCHEMA.COLUMNS
+    WHERE table_name = "bikeshare_trips";
+  
+    ```
+  
   - bikeshare_status has 107,501,619 rows and 4 columns  
   
-     ```SELECT COUNT (*)```  
-     ```FROM``` ``` `bigquery-public-data.san_francisco.bikeshare_status`;```
+    ```
+    SELECT COUNT (*)
+    FROM `bigquery-public-data.san_francisco.bikeshare_status`;
      
-     ```SELECT COUNT(distinct column_name) ```  
-     ```FROM``` ``` `bigquery-public-data`.san_francisco.INFORMATION_SCHEMA.COLUMNS```  
-    ```WHERE table_name = "bikeshare_status";```
-
+    SELECT COUNT(distinct column_name)
+    FROM  `bigquery-public-data`.san_francisco.INFORMATION_SCHEMA.COLUMNS
+    WHERE table_name = "bikeshare_status"; 
+    ``` 
+     
   - bikeshare_stations has 74 rows and 7 columns  
   
-     ```SELECT COUNT (*)```  
-     ```FROM``` ``` `bigquery-public-data.san_francisco.bikeshare_stations`;```
+    ```
+    SELECT COUNT (*)
+    FROM `bigquery-public-data.san_francisco.bikeshare_stations`;
      
-     ```SELECT COUNT(distinct column_name) ```  
-     ```FROM``` ``` `bigquery-public-data`.san_francisco.INFORMATION_SCHEMA.COLUMNS```  
-    ```WHERE table_name = "bikeshare_stations";```
-
+    SELECT COUNT(distinct column_name)
+    FROM  `bigquery-public-data`.san_francisco.INFORMATION_SCHEMA.COLUMNS
+    WHERE table_name = "bikeshare_stations";
+    ```   
+   
 
 **- What is the earliest start date and time and latest end date and time for a trip?**  
     (The UTC timestamps are incorrect, it appears. It seems like these are almost certainly PST times.)
@@ -161,16 +168,20 @@ Paste your SQL query and answer the question in a sentence.  Be sure you properl
   - The earliest start date and time was: 2013-08-29 09:08:00 UTC 
   - The latest end date and time was: 2016-08-31 23:48:00 UTC
   
-	```SELECT MIN(start_date), MAX(end_date)```  
-	```FROM``` ``` `bigquery-public-data.san_francisco.bikeshare_trips`;```
+	  ```
+	  SELECT MIN(start_date), MAX(end_date)
+	  FROM `bigquery-public-data.san_francisco.bikeshare_trips`;
+    ```
+	
   
 **- How many bikes are there?**
 
   - There are 700 bikes as measured by unique bike IDs in the bikeshare_trips table
-  
-    ```SELECT COUNT (DISTINCT bike_number) AS  Unique_Bike_IDs```  
-    ```FROM``` ``` `bigquery-public-data.san_francisco.bikeshare_trips`;```
-
+    
+    ```  
+    SELECT COUNT (DISTINCT bike_number) AS  Unique_Bike_IDs
+    FROM `bigquery-public-data.san_francisco.bikeshare_trips`;
+    ```
 
 
 ### Questions of your own
@@ -179,65 +190,75 @@ Paste your SQL query and answer the question in a sentence.  Be sure you properl
 
 - **Question 1: What were the total number of trips per month over the span of the dataset?</span>**  
 
-  * Answer: The answer is returned in the SQL query and the sum matches the total number of rows in the table.
+  * Answer: The answer is returned in the SQL query and the sum matches the total number of rows in the table. For example, there were 2,102 trips in Aug-2013 and 30,355 in Aug-2016.
   
   * SQL query:
+      
+      ```  
+      SELECT  
+      COUNT(DISTINCT trip_id) AS trips,  
+      DATE_TRUNC(DATE(START_DATE), MONTH) AS month  
+      FROM  
+        `bigquery-public-data.san_francisco.bikeshare_trips`  
+      GROUP BY  
+        2  
+      ORDER BY  
+        2;  
+       ```   
   
-    `SELECT`     
-    `COUNT(DISTINCT trip_id) AS trips,`   
-    `DATE_TRUNC(DATE(START_DATE), MONTH) as month`  
-    ```FROM``` ``` `bigquery-public-data.san_francisco.bikeshare_trips` ```   
-    `GROUP BY 2`  
-    `ORDER BY 2;`  
-  
-
 - **Question 2: What percentage of trips, by month, did subscribers's account for?**
-  * Answer: Subscriber trips represented 44%-79% from Aug-2013-Oct_10. 
-    After that point, subscribers trips were between 81% and 93% of total trips
+  * Answer: Subscriber trips represented 44%-79% from Aug-2013-Oct-2013. 
+    After that point, subscribers trips were between 81% and 93% of total trips.
+    Specific values: subscribers were 44% of total trips in Aug-2013 and 93% in Dec-2015.
   * SQL query: 
-  
-    `SELECT`  
-    `DATE_SUB(DATE_ADD(DATE_TRUNC(DATE(start_date), MONTH), INTERVAL 1 MONTH), INTERVAL 1 DAY) AS Month,`  
-    `FORMAT("%2.0f%%", (COUNT (DISTINCT`  
-      `IF`  
-        `(subscriber_type = 'Subscriber',`  
-          `trip_id,`  
-          `NULL))/COUNT(trip_id)*100)) AS trips`
-    `FROM`  
-    ``` `bigquery-public-data.san_francisco.bikeshare_trips` ```  
-    `GROUP BY 1`  
-    `ORDER BY 1;`  
-  
 
-- **Question 3: How has the number of stations changed over time??**
-  * Answer: There were between 64 & 71 stations over the ~3 year time frame of the dataset
+      ```  
+      SELECT
+        DATE_SUB(DATE_ADD(DATE_TRUNC(DATE(start_date), MONTH), INTERVAL 1 MONTH), INTERVAL 1 DAY) AS Month,
+        FORMAT("%2.0f%%", (COUNT (DISTINCT
+            IF
+              (subscriber_type = 'Subscriber',
+                trip_id,
+                NULL))/COUNT(trip_id)*100)) AS trips
+      FROM
+        `bigquery-public-data.san_francisco.bikeshare_trips`
+      GROUP BY
+        1
+      ORDER BY
+        1; 
+      ```  
+
+- **Question 3: How has the number of stations changed over time?**
+  * Answer: There were between 64 & 71 stations over the ~3 year time frame of the dataset. There were 64 unique stations used for trips in Sep-2013 and 75 in Sep-2015.
   * SQL query:
   
-  	`WITH unique_stations AS (`  
-  	  `SELECT`   
-  	    `DISTINCT`  
-        `DATE_SUB(DATE_ADD(DATE_TRUNC(DATE(start_date), MONTH),`   
-         `INTERVAL 1 MONTH), INTERVAL 1 DAY) AS Month,`  
-  	      `start_station_name`
-  	    `FROM`
-  	      ``` `bigquery-public-data.san_francisco.bikeshare_trips` ``` 
-  
-  	  `UNION DISTINCT`
-  
-  	  `SELECT` 
-  	    `DISTINCT`
-  	      `DATE_SUB(DATE_ADD(DATE_TRUNC(DATE(start_date), MONTH), INTERVAL 1` `MONTH), INTERVAL 1 DAY) AS Month,`  
-  	      `end_station_name`
-  	    `FROM`
-  	     ``` `bigquery-public-data.san_francisco.bikeshare_trips` ```
-  	`)`
-  	  
-  	`SELECT`  
-  	  `unique_stations.Month,`  
-  	  `COUNT(unique_stations.start_station_name)`  
-  	`FROM unique_stations`  
-  	  `GROUP BY 1`  
-  	  `ORDER BY 1;`  
+      ```
+      WITH unique_stations AS (
+        SELECT 
+          DISTINCT
+            DATE_SUB(DATE_ADD(DATE_TRUNC(DATE(start_date), MONTH), 
+              INTERVAL 1 MONTH), INTERVAL 1 DAY) AS Month,  
+            start_station_name
+          FROM
+            `bigquery-public-data.san_francisco.bikeshare_trips` 
+      
+        UNION DISTINCT
+      
+        SELECT 
+          DISTINCT
+            DATE_SUB(DATE_ADD(DATE_TRUNC(DATE(start_date), MONTH), INTERVAL 1 MONTH), INTERVAL 1 DAY) AS Month,  
+            end_station_name
+          FROM
+            `bigquery-public-data.san_francisco.bikeshare_trips` 
+      )
+      SELECT
+        unique_stations.Month,
+        COUNT(DISTINCT unique_stations.start_station_name)
+      FROM unique_stations
+        GROUP BY 1
+        ORDER BY 1;
+      ```
+
 
 
 ### Bonus activity queries (optional - not graded - just this section is optional, all other sections are required)
@@ -305,25 +326,23 @@ from `bigquery-public-data.san_francisco_bikeshare.bikeshare_station_info`
           FROM
           `bigquery-public-data.san_francisco.bikeshare_trips`'  
       ```  
-
-  |        First        |         Last        |
-  |:-------------------:|:-------------------:|
-  | 2013-08-29 09:08:00 | 2016-08-31 23:48:00 |
-
+      
+   |        First        |         Last        |
+   |:-------------------:|:-------------------:|
+   | 2013-08-29 09:08:00 | 2016-08-31 23:48:00 |
+      
 
 
   * How many bikes are there?
 
       ```
-      bq query --use_legacy_sql=false '
-        SELECT MIN(start_date), MAX(end_date) 
-          FROM
-          `bigquery-public-data.san_francisco.bikeshare_trips`'  
+      bq query --use_legacy_sql=false 'SELECT COUNT (DISTINCT bike_number) AS  Unique_Bike_IDs FROM `bigquery-public-data.san_francisco.bikeshare_trips`'
       ```
       
-  | Unique_Bike_IDs |
-  |:---------------:|
-  |       700       |
+   | Unique_Bike_IDs |
+   |:---------------:|
+   |       700       |
+
 
 
 2. New Query (Run using bq and paste your SQL query and answer the question in a sentence, using properly formatted markdown):
@@ -363,13 +382,33 @@ from `bigquery-public-data.san_francisco_bikeshare.bikeshare_station_info`
 Identify the main questions you'll need to answer to make recommendations (list
 below, add as many questions as you need).
 
-- Question 1: 
+- Question 1: How much has ridership grown over the span of the dataset? Our goal is to increase ridership and/or revenue. The dataset doesn't include revenue, so using growth in the number of trips seems like our best option. 
 
-- Question 2: 
+- Question 2: How much has ridership, as measured by the total duration bikes are ridden, grown over the span of the dataset? A complimentary ridership measure that we could create is total hours the bike was in use. The idea being that customers get more value the more time they used the bikes. 
 
-- Question 3: 
+- Question 3: On weekdays, which hours are commute hours?
 
-- Question 4: 
+- Question 4: How significant are commuter trips to the overall business?
+
+- Question 5: Are there roughly the same number of morning and evening commute trips? Or is one more common than the other?
+
+- Question 6: What are the 5 most popular commuter trips?
+
+- Question 7: How did you define a commuter trip?
+
+- Question 8: Where are the most popular stations located?
+
+- Question 9: Where are ALL the stations in the dataset located?
+
+- Question 10: How much did the number of stations grow over the span of the dataset?
+
+- Question 11: What is the median commute duration?
+
+- Question 12: What is the media duration of all trips?
+
+
+
+
 
 - ...
 
@@ -381,27 +420,92 @@ Answer at least 4 of the questions you identified above You can use either
 BigQuery or the bq command line tool.  Paste your questions, queries and
 answers below.
 
-- Question 1: 
-  * Answer:
-  * SQL query:
+- Question 1: How much has ridership grown over the span of the dataset? Our goal is to increase ridership and/or revenue. The dataset doesn't include revenue, so using growth in the number of trips seems like our best option. 
 
-- Question 2:
-  * Answer:
+  * Answer: I calculated a somewhat scrubbed measure of total monthly trips. There were as few as 2,069 in the partial month of Aug-2013 and as many as 33,929 in Oct-14. The lowest full month figure was 18,250 in Dec-2015. Overall, there was no growth in trips between the first and last year of the series. Both the year ending Aug-2014 and the year ending Aug-2016 had almost precisely 314K trips. While there was growth in 2015, all of that was erased in 2016. 
+  
   * SQL query:
+    ```
+    SELECT
+      DATE_SUB(DATE_ADD(DATE_TRUNC(DATE(end_date), MONTH),INTERVAL 1 MONTH), INTERVAL 1 DAY) AS Month,
+      COUNT(trip_id) AS trips
+    FROM `bigquery-public-data.san_francisco.bikeshare_trips`
+    WHERE (duration_sec/60 > 2) AND (duration_sec/3600 < 48) 
+    GROUP BY 1 
+    ORDER BY 1
+    ```  
 
-- Question 3:
-  * Answer:
+- Question 2: How much has ridership, as measured by the total duration bikes are ridden, grown over the span of the dataset? A complimentary ridership measure that we could create is total hours the bike was in use. The idea being that customers get more value the more time they used the bikes. 
+
+  * Answer: This turned out to be a more negative measure than the number of trips. Trips were flat, at an average of ~8,000 hours/month between Sep-13 and Sep-15. However, during the last year of the series the average dropped closer to ~6,000 hours/month. In retrospect, after seeing other data at a later stage of the analysis, I don't believe this usage measure is the best way of assessing customer value, because the primary use case for bikes turned out to be very short trips. 
+  
+  * SQL query:
+    ```
+    SELECT
+      DATE_SUB(DATE_ADD(DATE_TRUNC(DATE(end_date), MONTH), INTERVAL 1 MONTH), INTERVAL 1 DAY) AS Month,
+      SUM(duration_sec)/3600/1000 AS duration_minutes
+    FROM `bigquery-public-data.san_francisco.bikeshare_trips`
+    WHERE (duration_sec/60 > 2) AND (duration_sec/3600 < 48)
+    GROUP BY 1 
+    ORDER BY 1
+    ```
+
+
+- Question 3: On weekdays, which hours are commute hours?
+
+  * Answer: On weekdays, trips peaked in the morning, between 7AM and 10AM and in the evening between 4PM and 7PM. We used these time periods as part of our definition of which trips were commutes. Although the time in the tables is represented as UTC, further analysis appears to suggest the times are actually PST. (i.e. If the time in the trip table says 7AM UTC, it's actually 7AM PST.)
+  
   * SQL query:
   
-- Question 4:
-  * Answer:
+    ```
+    SELECT
+      EXTRACT(HOUR FROM DATETIME_TRUNC(DATETIME(end_date), HOUR)) AS Hour,
+      COUNT(DISTINCT trip_id) AS trips, 
+    FROM
+      `bigquery-public-data.san_francisco.bikeshare_trips`
+    WHERE
+      (duration_sec/60 > 2) AND (duration_sec/3600 < 48) AND          
+      EXTRACT(DAYOFWEEK FROM end_date) BETWEEN 2 AND 6 
+    GROUP BY
+      1
+    ORDER BY
+      1
+    ```
+
+  
+- Question 4: How significant are commuter trips to the overall business?
+
+  * Answer: I answered this by determining the percentage of all trips that commuter trips represented. In the year ending Aug-2014, commute trips were 50% of the total. In the year ending Aug-2015, they represented 57% of the total and in the year ending Aug-2016 it rose to 61% of total. So they grew each year. I suspect this likely understates the importance of commuters to the business, because some fraction of these customers may also use bikes at other times of the day/week. 
+
   * SQL query:
   
-- ...
+    ```
+    SELECT 
+        MONTH, COUNT(DISTINCT commuter_trips) as Commuter_Trips, COUNT(DISTINCT total_trips) as Total_Trips
+    FROM
+    (
+      SELECT
+        trip_id AS total_trips,        
+        CASE WHEN 
+          (duration_sec/60 > 2) AND (duration_sec/3600 < 48) AND  
+          ((EXTRACT(HOUR FROM DATETIME_TRUNC(DATETIME(end_date), HOUR)) BETWEEN 7 AND 9) OR
+          (EXTRACT(HOUR FROM DATETIME_TRUNC(DATETIME(start_date), HOUR)) BETWEEN 16 AND 18)) 
+    
+          AND EXTRACT(DAYOFWEEK FROM start_date) BETWEEN 2 AND 6 
+          THEN trip_id
+          ELSE NULL
+          END
+          AS commuter_trips,                          
+        DATE_SUB(DATE_ADD(DATE_TRUNC(DATE(start_date), MONTH), INTERVAL 1 MONTH), INTERVAL 1 DAY) AS Month
+          
+        FROM `bigquery-public-data.san_francisco.bikeshare_trips`
+    ) 
+    GROUP BY 1
+    ORDER BY 1
+    ```  
+  
+  
 
-- Question n:
-  * Answer:
-  * SQL query:
 
 ---
 
